@@ -1,0 +1,6 @@
+[
+{
+  "directory": "/Users/tien/Documents/0x1A98",
+  "arguments": ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang", "-c", "-Qunused-arguments", "-target", "arm64-apple-macos14.5", "-isysroot", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk", "-fvisibility=hidden", "-O3", "-std=c17", "-F/Library/Frameworks", "-framework", "SDL2", "-DNDEBUG", "-o", "build/.objs/0x1A98/macosx/arm64/release/src/main.c.o", "src/main.c"],
+  "file": "src/main.c"
+}]
