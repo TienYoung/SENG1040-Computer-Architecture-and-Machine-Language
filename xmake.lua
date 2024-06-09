@@ -6,8 +6,8 @@ target("0x1A98")
     set_kind("binary")
     add_files("src/*.c")
     if is_plat("macosx") then
-        add_frameworkdirs("/Library/Frameworks")
-        add_frameworks("SDL2")
+        -- add_frameworkdirs("/Library/Frameworks")
+        -- add_frameworks("SDL2")
     else
 	    add_linkdirs("Library")
         add_links("SDL2")

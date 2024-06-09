@@ -25,25 +25,26 @@ const char* Load(ADDRESS_MODE mode)
     // fetch regiter.pc
 }
 
-int parse(void)
+int parse(unsigned char opcode)
 {
-    unsigned char opcode = 0xC6;
     switch (opcode)
     {
     case 0xC6:
-        LDA(Load(EXT));
+        printf("LDA(Load(EXT));\n");
         break;
     case 0xA4:
-        AND(Load(IMM));
+        printf("AND(Load(IMM));\n");
         break;
     case 0x27:
-        BEQ(Load(REL));
+        printf("BEQ(Load(REL));\n");
         break;
     case 0xC7:
-        STA(Load(EXT));
+        printf("STA(Load(EXT));\n");
         break;
     case 0xCC:
-        JMP(Load(EXT));
+        printf("JMP(Load(EXT));\n");
         break;
+    default:
+        printf("%#X\n", opcode); // data
     }
 }
