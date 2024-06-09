@@ -1,6 +1,0 @@
-[
-{
-  "directory": "c:\\Users\\const\\Desktop\\0x1A98",
-  "arguments": ["clang-cl.exe", "-c", "-m64", "-O2", "-std:c17", "-Iinclude", "-DNDEBUG", "-Fobuild\\.objs\\0x1A98\\windows\\x64\\release\\src\\main.c.obj", "src\\main.c"],
-  "file": "src\\main.c"
-}]
