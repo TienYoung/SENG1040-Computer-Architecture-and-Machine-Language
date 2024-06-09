@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include <SDL2/SDL.h>
+#include "stack.h"
 
 int main(int argc, char* argv[]) {
-    SDL_Init(SDL_INIT_EVERYTHING);
     printf("HC08 emulator\n");
     return 0;
 }

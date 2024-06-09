@@ -1,13 +1,15 @@
 add_rules("mode.debug", "mode.release")
+add_includedirs("include")
 
 target("0x1A98")
     set_languages("c17")
     set_kind("binary")
     add_files("src/*.c")
     if is_plat("macosx") then
-        add_frameworks("SDL2")
         add_frameworkdirs("/Library/Frameworks")
+        add_frameworks("SDL2")
     else
+	    add_linkdirs("Library")
         add_links("SDL2")
     end
 --
