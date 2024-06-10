@@ -11,8 +11,11 @@ target("0x1A98")
     else
 	    add_linkdirs("Library")
         add_links("SDL2")
-        set_optimize("faster") -- bswap
+        if is_mode("release") then
+            set_optimize("faster") -- bswap
+        end 
     end
+
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --

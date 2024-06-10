@@ -47,8 +47,7 @@ int main(int argc, char* argv[]) {
     puts("");
 
     // Program header
-    // for(size_t i = 0; i < e_phnum; i ++)
-    size_t i = 1;
+    for(size_t i = 0; i < e_phnum; i ++)
     {
         // Identifies the type of the segment.
         fseek(file, e_phoff + e_phentsize * i + P_TYPE, SEEK_SET);
@@ -100,27 +99,36 @@ int main(int argc, char* argv[]) {
         printf("Flags:\t\t%#x\n", p_flags);
         printf("Align:\t\t%#x\n", p_align);
         puts("");
-        
 
-
-
-        fseek(file, p_offset, SEEK_SET);
-        fpos_t programStart = 0;
-        FILE_CHECK(fgetpos(file, &programStart));
-        while (1)
+        if (i == 1)
         {
-            fpos_t programSize = 0;
-            FILE_CHECK(fgetpos(file, &programSize));
-            programSize = programSize - programStart;
-            if(programSize > p_filesz)
-                break;
-
-            byte_t byte;
-            fread(&byte, sizeof(byte_t), 1, file);
-            
-            parse(byte);
+            byte_t* program = malloc(p_memsz);
+            fseek(file, p_offset, SEEK_SET);
+            fread(program, sizeof(byte_t), p_memsz, file);
+            Map(program, p_memsz, p_vaddr);
+            free(program);
         }
     }
+
+    test();
+    parse();
+
+    //fseek(file, p_offset, SEEK_SET);
+    //fpos_t programStart = 0;
+    //FILE_CHECK(fgetpos(file, &programStart));
+    //while (1)
+    //{
+    //    fpos_t programSize = 0;
+    //    FILE_CHECK(fgetpos(file, &programSize));
+    //    programSize = programSize - programStart;
+    //    if (programSize > p_filesz)
+    //        break;
+
+    //    byte_t byte;
+    //    fread(&byte, sizeof(byte_t), 1, file);
+
+    //    parse(byte);
+    //}
 
 
     if(fclose(file) != 0)

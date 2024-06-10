@@ -1,36 +1,66 @@
-#define STACK_SIZE 65536
+#include "hc08.h"
 
-typedef struct
-{
-    unsigned int stack[STACK_SIZE];
-} Memory;
+#include <stdlib.h>
+#include <string.h>
 
-typedef struct
+#define STACK_SIZE      0xFFFF // 65536
+#define DATA_SIZE       0xFFFF // 65536
+#define VIRTUAL_SIZE       0xFFFF // 65536
+
+byte_t* program;
+
+struct Memory
 {
-    unsigned char A;    // Accumulator
-    unsigned short IR;  // Index Register(H:X)
-    unsigned short SP;  // Stack Pointer;
-    unsigned short PC;  // Program Counter;
-    unsigned char CCR;  // Condition Code Register;
+    uint32_t stack[STACK_SIZE];
+    byte_t data[DATA_SIZE];
+    byte_t virtual[VIRTUAL_SIZE];
+} memory = { .stack = {0}, .virtual = {0}, .data = {0} };
+
+struct Register
+{
+    byte_t A;    // Accumulator
+    uint16_t IR;  // Index Register(H:X)
+    uint16_t SP;  // Stack Pointer;
+    uint16_t PC;  // Program Counter;
+    byte_t CCR;  // Condition Code Register;
     // H I N Z C
-} Register;
+} reg;
 
 typedef enum
 {
     IMM, DIR, EXT, IX2, IX1, IX, SP2, SP1, REL
 } ADDRESS_MODE;
 
-const char* Load(ADDRESS_MODE mode)
+void Map(byte_t* program, uint32_t size, uint32_t address)
 {
-    // fetch regiter.pc
+    memcpy(&memory.virtual[address], program, size);
+    reg.PC = address;
 }
 
-int parse(unsigned char opcode)
+void LDA(byte_t bytes[], ADDRESS_MODE mode)
 {
+    switch (mode)
+    {
+        case EXT:
+            reg.A = memory.data[BSWAP_16(bytes)];
+            reg.PC += 2;
+        break;
+    }
+}
+
+void test()
+{
+    memory.data[0x0101] = 'S';
+}
+
+int parse()
+{
+    unsigned char opcode = memory.virtual[reg.PC++];
     switch (opcode)
     {
     case 0xC6:
         printf("LDA(Load(EXT));\n");
+        LDA(&memory.virtual[reg.PC], EXT);
         break;
     case 0xA4:
         printf("AND(Load(IMM));\n");
