@@ -112,6 +112,10 @@ int main(int argc, char* argv[]) {
 
     test();
     parse();
+    parse();
+    parse();
+    parse();
+    parse();
 
     //fseek(file, p_offset, SEEK_SET);
     //fpos_t programStart = 0;
