@@ -129,8 +129,11 @@ void BEQ(ADDRESS_MODE mode)
         if (registers.ccr.Z == 1)
         {
             char_t rel = memory.virtual[registers.PC + 1];
-            printf("PC%#x, relative: %d\n", registers.PC, rel);
             registers.PC += 0x0002 + rel;
+        }
+        else
+        {
+            registers.PC += 2;
         }
         break;
     }
@@ -141,9 +144,9 @@ void STA(ADDRESS_MODE mode)
     switch (mode)
     {
     case EXT:
-        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
         memory.virtual[ext] = registers.A;
-        registers.PC += 2;
+        registers.PC += 3;
         registers.ccr.V = 0;
         registers.ccr.N = (char_t)registers.A < 0;
         registers.ccr.Z = registers.A == 0;
@@ -156,7 +159,7 @@ void JMP(ADDRESS_MODE mode)
     switch (mode)
     {
     case EXT:
-        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
         registers.PC = ext;
         break;
     }

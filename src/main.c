@@ -116,19 +116,26 @@ int main(int argc, char* argv[]) {
     // }
     FILE_CHECK(fclose(file));
 
-    while(1)
+    // Test: 
     {
-        int input = getchar();
-        if(input == '\n')
+        // Into branch.
+        memory.virtual[0x0101] = 0b01000000;
+        memory.virtual[0x0100] = 'C';
+
+        while (1)
         {
-            step();
-        }
-        else
-        {
-            break;
+            int input = getchar();
+            if (input == '\n')
+            {
+                step();
+                printf("Debug: 0x1000: %c\n", memory.virtual[0x1000]);
+            }
+            else
+            {
+                break;
+            }
         }
     }
-
 
     return EXIT_SUCCESS;
 }
