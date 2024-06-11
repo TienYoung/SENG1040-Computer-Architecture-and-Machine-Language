@@ -2,7 +2,8 @@
 
 ## Intro
 This is a simple HC08 emulator. Go into the [docs](docs) folder to check the details.
-For now, it just simulates the main.asm program given by the CAML course resources on eConestoga.
+
+For now, it just simulates the [main.asm](docs/CodeWarrior/main.asm) program given by the CAML course resources on eConestoga.
 
 ## Build
 This project uses [xmake](https://xmake.io/#/getting_started) as a build system.
