@@ -64,13 +64,15 @@ void Map(byte_t* program, uint32_t size, uint32_t address)
     memcpy(&memory.virtual[registers.PC], program, size);
 }
 
+
+// Instruction Set
 void LDHA(ADDRESS_MODE mode)
 {
     switch (mode)
     {
     case IMM:
-        registers.IR = BSWAP_16(&memory.virtual[registers.PC]);
-        registers.PC += 2;
+        registers.IR = BSWAP_16(&memory.virtual[registers.PC + 1]);
+        registers.PC += 3;
         registers.ccr.V = 0;
         registers.ccr.N = (int16_t)registers.IR < 0;
         registers.ccr.Z = registers.IR == 0;
@@ -80,11 +82,13 @@ void LDHA(ADDRESS_MODE mode)
 
 void TXS()
 {
+    registers.PC += 1;
     registers.SP = registers.IR - 1;
 }
 
 void CLI()
 {
+    registers.PC += 1;
     registers.ccr.I = 0;
 }
 
@@ -93,9 +97,9 @@ void LDA(ADDRESS_MODE mode)
     switch (mode)
     {
     case EXT:
-        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
         registers.A = memory.virtual[ext];
-        registers.PC += 2;
+        registers.PC += 3;
         registers.ccr.V = 0;
         registers.ccr.N = (char_t)registers.A < 0;
         registers.ccr.Z = registers.A == 0;
@@ -108,8 +112,8 @@ void AND(ADDRESS_MODE mode)
     switch (mode)
     {
     case IMM:
-        registers.A &= memory.virtual[registers.PC];
-        registers.PC += 1;
+        registers.A &= memory.virtual[registers.PC + 1];
+        registers.PC += 2;
         registers.ccr.V = 0;
         registers.ccr.N = (char_t)registers.A < 0;
         registers.ccr.Z = registers.A == 0;
@@ -124,7 +128,8 @@ void BEQ(ADDRESS_MODE mode)
     case REL:
         if (registers.ccr.Z == 1)
         {
-            byte_t rel = memory.virtual[registers.PC];
+            char_t rel = memory.virtual[registers.PC + 1];
+            printf("PC%#x, relative: %d\n", registers.PC, rel);
             registers.PC += 0x0002 + rel;
         }
         break;
@@ -159,7 +164,7 @@ void JMP(ADDRESS_MODE mode)
 
 void step()
 {
-    unsigned char opcode = memory.virtual[registers.PC++];
+    unsigned char opcode = memory.virtual[registers.PC];
     switch (opcode)
     {
     case 0x45:

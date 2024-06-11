@@ -110,10 +110,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if(fclose(file) != 0)
-    {
-        fprintf(stderr, "Error: cannot close file: %s\n", filename);
-    }
+    // if(fclose(file) != 0)
+    // {
+    //     fprintf(stderr, "Error: cannot close file: %s\n", filename);
+    // }
+    FILE_CHECK(fclose(file));
 
     while(1)
     {
@@ -124,7 +125,7 @@ int main(int argc, char* argv[]) {
         }
         else
         {
-            break;            
+            break;
         }
     }
 
