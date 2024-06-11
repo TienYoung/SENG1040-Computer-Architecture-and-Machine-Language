@@ -8,7 +8,7 @@ typedef short           int16_t;
 typedef int             int32_t;
 
 #if _MSC_VER >= 1933
-    #define BSWAP_16(x) _byteswap_ushort(*(uint32_t*)(x))
+    #define BSWAP_16(x) _byteswap_ushort(*(uint16_t*)(x))
     #define BSWAP_32(x) _byteswap_ulong(*(uint32_t*)(x))
 #else 
     #define BSWAP_16(x) __builtin_bswap16(*(uint16_t*)(x))

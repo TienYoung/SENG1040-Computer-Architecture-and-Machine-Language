@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
     // Test: 
     {
         // Into branch.
-        memory.virtual[0x0101] = 0b01000000;
+        memory.virtual[0x0101] = 0b10000000;
         memory.virtual[0x0100] = 'C';
 
         while (1)
