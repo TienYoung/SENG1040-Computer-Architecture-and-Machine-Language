@@ -3,7 +3,6 @@
 
 #include "elf.h"
 #include "hc08.h"
-#include "stack.h"
 
 #define FILE_CHECK(call) do {                   \
     if(call != 0)                               \
