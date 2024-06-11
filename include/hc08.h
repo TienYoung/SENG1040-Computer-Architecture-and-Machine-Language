@@ -3,6 +3,9 @@
 typedef unsigned char   byte_t;
 typedef unsigned short  uint16_t;
 typedef unsigned int    uint32_t;
+typedef char            char_t;
+typedef short           int16_t;
+typedef int             int32_t;
 
 #if _MSC_VER >= 1933
     #define BSWAP_16(x) _byteswap_ushort(*(uint32_t*)(x))

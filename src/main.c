@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
         printf("Align:\t\t%#x\n", p_align);
         puts("");
 
-        if (i == 1)
+        if (i == 1) // Dump program #1
         {
             byte_t* program = malloc(p_memsz);
             fseek(file, p_offset, SEEK_SET);
@@ -110,35 +110,24 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    test();
-    parse();
-    parse();
-    parse();
-    parse();
-    parse();
-
-    //fseek(file, p_offset, SEEK_SET);
-    //fpos_t programStart = 0;
-    //FILE_CHECK(fgetpos(file, &programStart));
-    //while (1)
-    //{
-    //    fpos_t programSize = 0;
-    //    FILE_CHECK(fgetpos(file, &programSize));
-    //    programSize = programSize - programStart;
-    //    if (programSize > p_filesz)
-    //        break;
-
-    //    byte_t byte;
-    //    fread(&byte, sizeof(byte_t), 1, file);
-
-    //    parse(byte);
-    //}
-
-
     if(fclose(file) != 0)
     {
         fprintf(stderr, "Error: cannot close file: %s\n", filename);
     }
+
+    while(1)
+    {
+        int input = getchar();
+        if(input == '\n')
+        {
+            step();
+        }
+        else
+        {
+            break;            
+        }
+    }
+
 
     return EXIT_SUCCESS;
 }

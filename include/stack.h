@@ -14,7 +14,7 @@ struct Memory
     byte_t virtual[VIRTUAL_SIZE];
 } memory = {.stack = {0}, .virtual = {0}};
 
-struct Register
+struct Registers
 {
     uint16_t IR;  // Index Register(H:X)
     uint16_t SP;  // Stack Pointer;
@@ -31,7 +31,27 @@ struct Register
         byte_t Z : 1;
         byte_t C : 1;
     } ccr;
-} reg;
+} registers;
+
+void display_registers(const char* instruction)
+{
+    printf("Current: %s\n", instruction);
+    printf("Registers:\n");
+    printf("  Accumulator: %#X\n", registers.A);
+    printf("  Index Register: %#X\n", registers.IR);
+    printf("  Stack Pointer: %#X\n", registers.SP);
+    printf("  Program Counter: %#X\n", registers.PC);
+    printf("  Condition Code Register:\n");
+    printf("    V:%d H:%d I:%d N:%d Z:%d C:%d\n",
+        registers.ccr.V,
+        registers.ccr.H,
+        registers.ccr.I,
+        registers.ccr.N,
+        registers.ccr.Z,
+        registers.ccr.C
+    );
+}
+
 
 typedef enum
 {
@@ -40,8 +60,8 @@ typedef enum
 
 void Map(byte_t* program, uint32_t size, uint32_t address)
 {
-    memcpy(&memory.virtual[address], program, size);
-    reg.PC = address;
+    registers.PC = address;
+    memcpy(&memory.virtual[registers.PC], program, size);
 }
 
 void LDHA(ADDRESS_MODE mode)
@@ -49,25 +69,23 @@ void LDHA(ADDRESS_MODE mode)
     switch (mode)
     {
     case IMM:
-        reg.IR = BSWAP_16(&memory.virtual[reg.PC]);
-        reg.PC += 2;
-        reg.ccr.V = 0;
-        reg.ccr.N = (int)reg.IR < 0;
-        reg.ccr.Z = reg.IR == 0;
+        registers.IR = BSWAP_16(&memory.virtual[registers.PC]);
+        registers.PC += 2;
+        registers.ccr.V = 0;
+        registers.ccr.N = (int16_t)registers.IR < 0;
+        registers.ccr.Z = registers.IR == 0;
         break;
     }
 }
 
 void TXS()
 {
-    reg.SP = reg.IR - 1;
-    reg.PC++;
+    registers.SP = registers.IR - 1;
 }
 
 void CLI()
 {
-    reg.ccr.I = 0;
-    reg.PC++;
+    registers.ccr.I = 0;
 }
 
 void LDA(ADDRESS_MODE mode)
@@ -75,57 +93,109 @@ void LDA(ADDRESS_MODE mode)
     switch (mode)
     {
     case EXT:
-        reg.A = BSWAP_16(&memory.virtual[reg.PC]);
-        reg.PC += 2;
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        registers.A = memory.virtual[ext];
+        registers.PC += 2;
+        registers.ccr.V = 0;
+        registers.ccr.N = (char_t)registers.A < 0;
+        registers.ccr.Z = registers.A == 0;
         break;
     }
 }
 
-void test()
+void AND(ADDRESS_MODE mode)
 {
-    memory.virtual[0x0101] = 3;
+    switch (mode)
+    {
+    case IMM:
+        registers.A &= memory.virtual[registers.PC];
+        registers.PC += 1;
+        registers.ccr.V = 0;
+        registers.ccr.N = (char_t)registers.A < 0;
+        registers.ccr.Z = registers.A == 0;
+        break;
+    }
 }
 
-void printA()
+void BEQ(ADDRESS_MODE mode)
 {
-    printf("Accumulator: %d\n", reg.A);
+    switch (mode)
+    {
+    case REL:
+        if (registers.ccr.Z == 1)
+        {
+            byte_t rel = memory.virtual[registers.PC];
+            registers.PC += 0x0002 + rel;
+        }
+        break;
+    }
 }
 
-int parse()
+void STA(ADDRESS_MODE mode)
 {
-    unsigned char opcode = memory.virtual[reg.PC++];
+    switch (mode)
+    {
+    case EXT:
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        memory.virtual[ext] = registers.A;
+        registers.PC += 2;
+        registers.ccr.V = 0;
+        registers.ccr.N = (char_t)registers.A < 0;
+        registers.ccr.Z = registers.A == 0;
+        break;
+    }
+}
+
+void JMP(ADDRESS_MODE mode)
+{
+    switch (mode)
+    {
+    case EXT:
+        uint16_t ext = BSWAP_16(&memory.virtual[registers.PC]);
+        registers.PC = ext;
+        break;
+    }
+}
+
+void step()
+{
+    unsigned char opcode = memory.virtual[registers.PC++];
     switch (opcode)
     {
     case 0x45:
-        printf("LDHX(Load(IMM));\n");
         LDHA(IMM);
+        display_registers("LDHA(IMM)");
         break;
     case 0x94:
-        printf("TXS();\n");
         TXS();
+        display_registers("TXS");
         break;
     case 0x9A:
-        printf("CLI();\n");
         CLI();
+        display_registers("CLI");
         break;
     case 0xC6:
-        printf("LDA(Load(EXT));\n");
         LDA(EXT);
-        printA();
+        display_registers("LDA(EXT)");
         break;
     case 0xA4:
-        printf("AND(Load(IMM));\n");
+        AND(IMM);
+        display_registers("AND(IMM)");
         break;
     case 0x27:
-        printf("BEQ(Load(REL));\n");
+        BEQ(REL);
+        display_registers("BEQ(REL)");
         break;
     case 0xC7:
-        printf("STA(Load(EXT));\n");
+        STA(EXT);
+        display_registers("STA(EXT)");
         break;
     case 0xCC:
-        printf("JMP(Load(EXT));\n");
+        JMP(EXT);
+        display_registers("JMP(EXT)");
         break;
     default:
-        printf("%#X\n", opcode); // data
+        fprintf(stderr, "Warning: Unknown opcode %#X\n", opcode);
+        break;
     }
 }
