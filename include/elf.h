@@ -1,3 +1,5 @@
+#pragma once
+
 // File header
 #define E_PHOFF         0x1C
 #define E_PHENTSIZE     0x2A

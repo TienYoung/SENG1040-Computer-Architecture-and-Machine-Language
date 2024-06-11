@@ -1,8 +1,8 @@
 add_rules("mode.debug", "mode.release")
 add_includedirs("include")
+set_languages("c17")
 
 target("0x1A98")
-    set_languages("c17")
     set_kind("binary")
     add_files("src/*.c")
     if is_plat("macosx") then
@@ -11,7 +11,9 @@ target("0x1A98")
     else
         -- add_linkdirs("Library")
         -- add_links("SDL2")
-        if is_mode("release") then
+        if is_mode("debug") then
+            add_cflags("-g") -- debug info
+        else 
             set_optimize("faster") -- bswap
         end 
     end

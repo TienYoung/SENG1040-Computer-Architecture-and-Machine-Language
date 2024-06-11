@@ -14,3 +14,34 @@ typedef int             int32_t;
     #define BSWAP_16(x) __builtin_bswap16(*(uint16_t*)(x))
     #define BSWAP_32(x) __builtin_bswap32(*(uint32_t*)(x))
 #endif
+
+typedef struct 
+{
+    uint16_t IR; // Index Register(H:X)
+    uint16_t SP; // Stack Pointer;
+    uint16_t PC; // Program Counter;
+    byte_t A;    // Accumulator
+    struct CCR   // Condition Code Register;
+    {
+        byte_t V : 1;
+        byte_t _1 : 1;
+        byte_t _2 : 1;
+        byte_t H : 1;
+        byte_t I : 1;
+        byte_t N : 1;
+        byte_t Z : 1;
+        byte_t C : 1;
+    } ccr;
+} Registers;
+
+#include "stack.h"
+#include "hc08ISA.h"
+
+extern Registers registers;
+extern Memory memory;
+
+void Map(byte_t *program, uint32_t size, uint32_t address);
+
+void step();
+
+void display_registers(const char *instruction);
