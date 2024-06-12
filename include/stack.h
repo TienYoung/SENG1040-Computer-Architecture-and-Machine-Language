@@ -10,4 +10,4 @@ typedef struct
 {
     uint32_t stack[STACK_SIZE];
     byte_t virtual[VIRTUAL_SIZE];
-} Memory;
+} HC08_Memory;
