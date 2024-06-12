@@ -281,10 +281,8 @@ Operation
 Description
     Subtracts the contents of M from A and places the result in A
 */
-byte_t sub(byte_t A, byte_t M)
-{
+byte_t sub(byte_t A, byte_t M) {
     byte_t R = A - M;
-
 
     registers.ccr.V = A7 & ~M7 & ~R7 | ~A7 & M7 & R7;
     registers.ccr._6 = 1;
@@ -298,16 +296,14 @@ byte_t sub(byte_t A, byte_t M)
     return R;
 }
 
-void SUB_IMM(void)
-{
+void SUB_IMM(void) {
     byte_t A = registers.A;
     byte_t M = memory.virtual[registers.PC + 1];
     registers.A = sub(A, M);
     registers.PC += 0x0002;
 }
 
-void SUB_DIR(void)
-{
+void SUB_DIR(void) {
     byte_t A = registers.A;
     byte_t DIR = memory.virtual[registers.PC + 1];
     byte_t M = memory.virtual[DIR];
@@ -315,13 +311,38 @@ void SUB_DIR(void)
     registers.PC += 0x0002;
 }
 
-void SUB_EXT(void)
-{
+void SUB_EXT(void) {
     byte_t A = registers.A;
     uint16_t EXT = BSWAP_16(&memory.virtual[registers.PC + 1]);
     byte_t M = memory.virtual[EXT];
     registers.A = sub(A, M);
     registers.PC += 0x0002 + 1;
+}
+
+void SUB_IX2(void) {
+    byte_t A = registers.A;
+    uint16_t IX = registers.IR;
+    uint16_t offset = BSWAP_16(&memory.virtual[registers.PC + 1]);
+    byte_t M = memory.virtual[IX + offset];
+    registers.A = sub(A, M);
+    registers.PC += 0x0002 + 1;
+}
+
+void SUB_IX1(void) {
+    byte_t A = registers.A;
+    uint16_t IX = registers.IR;
+    byte_t offset = memory.virtual[registers.PC + 1];
+    byte_t M = memory.virtual[IX + offset];
+    registers.A = sub(A, M);
+    registers.PC += 0x0002;
+}
+
+void SUB_IX(void) {
+    byte_t A = registers.A;
+    uint16_t IX = registers.IR;
+    byte_t M = memory.virtual[IX];
+    registers.A = sub(A, M);
+    registers.PC += 1;
 }
 
 void CMP_IMM(void){}
@@ -408,7 +429,7 @@ void LDX_EXT(void){}
 void STX_EXT(void){}
 
 // D: IX2
-void SUB_IX2(void){}
+
 void CMP_IX2(void){}
 void SBC_IX2(void){}
 void CPX_IX2(void){}
@@ -428,7 +449,7 @@ void STX_IX2(void){}
 // 9ED: SP2
 
 // E: IX1
-void SUB_IX1(void){}
+
 void CMP_IX1(void){}
 void SBC_IX1(void){}
 void CPX_IX1(void){}
@@ -448,7 +469,7 @@ void STX_IX1(void){}
 // 9EE: SP1
 
 // F: IX
-void SUB_IX(void){}
+
 void CMP_IX(void){}
 void SBC_IX(void){}
 void CPX_IX(void){}
