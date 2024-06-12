@@ -24,8 +24,8 @@ typedef struct
     struct CCR   // Condition Code Register;
     {
         byte_t V : 1;
-        byte_t _1 : 1;
-        byte_t _2 : 1;
+        byte_t _6 : 1;
+        byte_t _5 : 1;
         byte_t H : 1;
         byte_t I : 1;
         byte_t N : 1;
@@ -42,6 +42,8 @@ extern HC08_Memory memory;
 extern void(*opcode_map[256])(void);
 
 void Map(byte_t *program, uint32_t size, uint32_t address);
+
+void reset_registers(void);
 
 void step();
 

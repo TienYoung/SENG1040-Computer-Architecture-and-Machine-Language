@@ -27,6 +27,33 @@ void(*opcode_map[])(void) = {
 /*F*/    SUB_IX,     CMP_IX,     SBC_IX,     CPX_IX,     AND_IX,     BIT_IX,     LDA_IX,     STA_IX,     EOR_IX,     ADC_IX,     ORA_IX,     ADD_IX,     JMP_IX,     JSR_IX,     LDX_IX,     STX_IX
 };
 
+#define M7 (M >> 7)
+#define M6 (M >> 6)
+#define M5 (M >> 5)
+#define M4 (M >> 4)
+#define M3 (M >> 3)
+#define M2 (M >> 2)
+#define M1 (M >> 1)
+#define M0 (M >> 0)
+
+#define A7 (A >> 7)
+#define A6 (A >> 6)
+#define A5 (A >> 5)
+#define A4 (A >> 4)
+#define A3 (A >> 3)
+#define A2 (A >> 2)
+#define A1 (A >> 1)
+#define A0 (A >> 0)
+
+#define R7 (R >> 7)
+#define R6 (R >> 6)
+#define R5 (R >> 5)
+#define R4 (R >> 4)
+#define R3 (R >> 3)
+#define R2 (R >> 2)
+#define R1 (R >> 1)
+#define R0 (R >> 0)
+
 // Bit-Manipulation
 // 0: DIR
 void BRSET0_DIR(void){}
@@ -248,8 +275,55 @@ void NOP_INH(void){}
 /*      STAR      */
 void TXA_INH(void){}
 
-// A IMM
-void SUB_IMM(void){}
+/* SUB
+Operation
+    A ← (A) – (M)
+Description
+    Subtracts the contents of M from A and places the result in A
+*/
+byte_t sub(byte_t A, byte_t M)
+{
+    byte_t R = A - M;
+
+
+    registers.ccr.V = A7 & ~M7 & ~R7 | ~A7 & M7 & R7;
+    registers.ccr._6 = 1;
+    registers.ccr._5 = 1;
+    registers.ccr.H;
+    registers.ccr.I;
+    registers.ccr.N = R7;
+    registers.ccr.Z = ~R7 & ~R6 & ~R5 & ~R4 & ~R3 & ~R2 & ~R1 & ~R0;
+    registers.ccr.C = ~A7 & M7 | M7 & R7 | R7 & ~A7;
+
+    return R;
+}
+
+void SUB_IMM(void)
+{
+    byte_t A = registers.A;
+    byte_t M = memory.virtual[registers.PC + 1];
+    registers.A = sub(A, M);
+    registers.PC += 0x0002;
+}
+
+void SUB_DIR(void)
+{
+    byte_t A = registers.A;
+    byte_t DIR = memory.virtual[registers.PC + 1];
+    byte_t M = memory.virtual[DIR];
+    registers.A = sub(A, M);
+    registers.PC += 0x0002;
+}
+
+void SUB_EXT(void)
+{
+    byte_t A = registers.A;
+    uint16_t EXT = BSWAP_16(&memory.virtual[registers.PC + 1]);
+    byte_t M = memory.virtual[EXT];
+    registers.A = sub(A, M);
+    registers.PC += 0x0002 + 1;
+}
+
 void CMP_IMM(void){}
 void SBC_IMM(void){}
 void CPX_IMM(void){}
@@ -260,7 +334,6 @@ void AND_IMM(void)
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    display_registers("ADD_IMM");
 }
 void BIT_IMM(void){}
 void LDA_IMM(void){}
@@ -276,7 +349,7 @@ void LDX_IMM(void){}
 void AIX_IMM(void){}
 
 // B: DIR
-void SUB_DIR(void){}
+
 void CMP_DIR(void){}
 void SBC_DIR(void){}
 void CPX_DIR(void){}
@@ -294,7 +367,7 @@ void LDX_DIR(void){}
 void STX_DIR(void){}
 
 // C: EXT
-void SUB_EXT(void){}
+
 void CMP_EXT(void){}
 void SBC_EXT(void){}
 void CPX_EXT(void){}

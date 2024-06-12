@@ -18,6 +18,18 @@ target("0x1A98")
         end 
     end
 
+target("Test")
+    set_kind("binary")
+    add_files("src/test/test.c", "src/hc08_ops.c", "src/hc08.c")
+    if is_plat("macosx") then
+    else
+        if is_mode("debug") then
+            add_cflags("-g") -- debug info
+        else 
+            set_optimize("faster") -- bswap
+        end 
+    end
+
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --

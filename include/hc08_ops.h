@@ -189,6 +189,7 @@ void NOP_INH(void);
 /*      STAR      */
 void TXA_INH(void);
 
+// Register/Memory
 // A IMM
 void SUB_IMM(void);
 void CMP_IMM(void);
