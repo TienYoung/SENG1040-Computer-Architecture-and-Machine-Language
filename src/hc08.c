@@ -2,8 +2,8 @@
 
 #include "stdio.h"
 
-Memory memory = {0};
-Registers registers = {0};
+HC08_Memory memory = {0};
+HC08_Registers registers = {0};
 
 void Map(byte_t* program, uint32_t size, uint32_t address)
 {
@@ -14,44 +14,8 @@ void Map(byte_t* program, uint32_t size, uint32_t address)
 void step()
 {
     unsigned char opcode = memory.virtual[registers.PC];
-    switch (opcode)
-    {
-    case 0x45:
-        LDHA(IMM);
-        display_registers("LDHA(IMM)");
-        break;
-    case 0x94:
-        TXS();
-        display_registers("TXS");
-        break;
-    case 0x9A:
-        CLI();
-        display_registers("CLI");
-        break;
-    case 0xC6:
-        LDA(EXT);
-        display_registers("LDA(EXT)");
-        break;
-    case 0xA4:
-        AND(IMM);
-        display_registers("AND(IMM)");
-        break;
-    case 0x27:
-        BEQ(REL);
-        display_registers("BEQ(REL)");
-        break;
-    case 0xC7:
-        STA(EXT);
-        display_registers("STA(EXT)");
-        break;
-    case 0xCC:
-        JMP(EXT);
-        display_registers("JMP(EXT)");
-        break;
-    default:
-        fprintf(stderr, "Warning: Unknown opcode %#X\n", opcode);
-        break;
-    }
+    opcode_map[opcode]();
+    printf("Opcode: %x\n", opcode);
 }
 
 void display_registers(const char* instruction)

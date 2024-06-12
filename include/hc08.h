@@ -32,13 +32,14 @@ typedef struct
         byte_t Z : 1;
         byte_t C : 1;
     } ccr;
-} Registers;
+} HC08_Registers;
 
 #include "stack.h"
-#include "hc08ISA.h"
+#include "hc08_ops.h"
 
-extern Registers registers;
-extern Memory memory;
+extern HC08_Registers registers;
+extern HC08_Memory memory;
+extern void(*opcode_map[256])(void);
 
 void Map(byte_t *program, uint32_t size, uint32_t address);
 
