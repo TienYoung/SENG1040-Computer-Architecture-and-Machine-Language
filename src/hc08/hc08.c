@@ -3,24 +3,25 @@
 #include <string.h>
 #include <stdio.h>
 
-byte_t memory[0xFFFF] = {0};
+byte_t memory[MEM_SIZE] = {0};
 HC08_Registers registers = {0};
 
-void memory_map(byte_t* program, uint32_t size, uint32_t address)
-{
+void memory_map(byte_t* program, uint32_t size, uint32_t address) {
     registers.PC = address;
     memcpy(&memory[registers.PC], program, size);
 }
 
-void program_step()
-{
+void memory_reset(void) {
+    memset(memory, 0x00, MEM_SIZE);
+}
+
+void program_step(void) {
     unsigned char opcode = memory[registers.PC];
     opcode_map[opcode]();
     printf("Opcode: %x\n", opcode);
 }
 
-void registers_reset(void)
-{
+void registers_reset(void) {
     registers.A = 0x00;
     registers.IR = 0x0000;
     registers.SP = 0x00FF;
@@ -36,9 +37,7 @@ void registers_reset(void)
     registers.ccr.C = 0;
 }
 
-void registers_display(const char* instruction)
-{
-    printf("Instruction: %s\n", instruction);
+void registers_display(void) {
     printf("Registers:\n");
     printf("  Accumulator: %#X\n", registers.A);
     printf("  Index Register: %#X\n", registers.IR);

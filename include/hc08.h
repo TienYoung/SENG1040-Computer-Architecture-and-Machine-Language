@@ -36,14 +36,19 @@ typedef struct
 
 extern HC08_Registers registers;
 
-extern byte_t memory[0xFFFF]; // 65536 - 64KB
+#define MEM_SIZE 65536
+extern byte_t memory[MEM_SIZE]; // 0xFFFF - 64KB
 
 #include "hc08_ops.h"
 
 void memory_map(byte_t *program, uint32_t size, uint32_t address);
 
-void program_step();
+void memory_reset(void);
+
+void program_step(void);
 
 void registers_reset(void);
 
-void registers_display(const char *instruction);
+void registers_display(void);
+
+void disassembly(void);

@@ -1,5 +1,7 @@
 #include "hc08.h"
 
+#include <stdio.h> // TODO: replace print register with hook function.
+
 // Empty and star
 #define OPS_EPT empty_func
 #define OPS_STR empty_func
@@ -109,7 +111,8 @@ void BEQ_REL(void)
     {
         registers.PC += 2;
     }
-    registers_display("BEQ_REL");
+    printf("BEQ_REL\n");
+    registers_display();
 }
 void BHCC_REL(void){}
 void BHCS_REL(void){}
@@ -158,7 +161,8 @@ void LTHX_IMM(void)
     registers.ccr.V = 0;
     registers.ccr.N = (int16_t)registers.IR < 0;
     registers.ccr.Z = registers.IR == 0;
-    registers_display("LTHX_IMM");
+    printf("LTHX_IMM\n");
+    registers_display();
 }
 void  RORA_INH(void){}
 void  ASRA_INH(void){}
@@ -254,7 +258,8 @@ void TXS_INH(void)
 {
     registers.PC += 1;
     registers.SP = registers.IR - 1;
-    registers_display("TXS_INH");
+    printf("TXS_INH\n");
+    registers_display();
 }
 void TSX_INH(void){}
 /*      NULL      */
@@ -265,7 +270,8 @@ void CLI_INH(void)
 {
     registers.PC += 1;
     registers.ccr.I = 0;
-    registers_display("CLI_INH");
+    printf("CLI_INH\n");
+    registers_display();
 }
 void SEI_INH(void){}
 void RSP_INH(void){}
@@ -400,7 +406,8 @@ void LDA_EXT(void)
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    registers_display("LDA_EXT");
+    printf("LDA_EXT\n");
+    registers_display();
 }
 void STA_EXT(void)
 {
@@ -410,7 +417,8 @@ void STA_EXT(void)
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    registers_display("STA_EXT");
+    printf("STA_EXT\n");
+    registers_display();
 }
 void EOR_EXT(void){}
 void ADC_EXT(void){}
@@ -420,7 +428,8 @@ void JMP_EXT(void)
 {
     uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
     registers.PC = ext;
-    registers_display("JMP_EXT");
+    printf("JMP_EXT\n");
+    registers_display();
 }
 void JSR_EXT(void){}
 void LDX_EXT(void){}
