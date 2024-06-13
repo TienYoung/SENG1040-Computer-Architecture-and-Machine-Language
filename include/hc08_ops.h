@@ -1,9 +1,6 @@
 #pragma once
 
-// typedef enum
-// {
-//     IMM, DIR, EXT, IX2, IX1, IX, SP2, SP1, REL
-// } ADDRESS_MODE;
+extern void(*opcode_map[256])(void);
 
 // Bit-Manipulation
 // 0

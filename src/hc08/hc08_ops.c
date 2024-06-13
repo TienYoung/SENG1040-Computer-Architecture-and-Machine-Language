@@ -1,13 +1,11 @@
-#include "hc08_ops.h"
 #include "hc08.h"
-#include "stack.h"
 
 // Empty and star
 #define OPS_EPT empty_func
 #define OPS_STR empty_func
 void empty_func(void){}
 
-void(*opcode_map[])(void) = {
+void(*opcode_map[256])(void) = {
 /*HIGH\LOW 0           1           2           3           4           5           6           7           8           9           A           B           C           D           E           F   */
 /*0*/ BRSET0_DIR, BRCLR0_DIR, BRSET1_DIR, BRCLR1_DIR, BRSET2_DIR, BRCLR2_DIR, BRSET3_DIR, BRCLR3_DIR, BRSET4_DIR, BRCLR4_DIR, BRSET5_DIR, BRCLR5_DIR, BRSET6_DIR, BRCLR6_DIR, BRSET7_DIR, BRCLR7_DIR,
 /*1*/  BSET0_DIR,  BCLR0_DIR,  BSET1_DIR,  BCLR1_DIR,  BSET2_DIR,  BCLR2_DIR,  BSET3_DIR,  BCLR3_DIR,  BSET4_DIR,  BCLR4_DIR,  BSET5_DIR,  BCLR5_DIR,  BSET6_DIR,  BCLR6_DIR,  BSET7_DIR,  BCLR7_DIR,
@@ -104,14 +102,14 @@ void BEQ_REL(void)
 {
     if (registers.ccr.Z == 1)
     {
-        char_t rel = memory.virtual[registers.PC + 1];
+        char_t rel = memory[registers.PC + 1];
         registers.PC += 0x0002 + rel;
     }
     else
     {
         registers.PC += 2;
     }
-    display_registers("BEQ_REL");
+    registers_display("BEQ_REL");
 }
 void BHCC_REL(void){}
 void BHCS_REL(void){}
@@ -155,12 +153,12 @@ void  COMA_INH(void){}
 void  LSRA_INH(void){}
 void LTHX_IMM(void)
 {
-    registers.IR = BSWAP_16(&memory.virtual[registers.PC + 1]);
+    registers.IR = BSWAP_16(&memory[registers.PC + 1]);
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (int16_t)registers.IR < 0;
     registers.ccr.Z = registers.IR == 0;
-    display_registers("LTHX_IMM");
+    registers_display("LTHX_IMM");
 }
 void  RORA_INH(void){}
 void  ASRA_INH(void){}
@@ -256,7 +254,7 @@ void TXS_INH(void)
 {
     registers.PC += 1;
     registers.SP = registers.IR - 1;
-    display_registers("TXS_INH");
+    registers_display("TXS_INH");
 }
 void TSX_INH(void){}
 /*      NULL      */
@@ -267,7 +265,7 @@ void CLI_INH(void)
 {
     registers.PC += 1;
     registers.ccr.I = 0;
-    display_registers("CLI_INH");
+    registers_display("CLI_INH");
 }
 void SEI_INH(void){}
 void RSP_INH(void){}
@@ -287,8 +285,8 @@ byte_t sub(byte_t A, byte_t M) {
     registers.ccr.V = A7 & ~M7 & ~R7 | ~A7 & M7 & R7;
     registers.ccr._6 = 1;
     registers.ccr._5 = 1;
-    registers.ccr.H;
-    registers.ccr.I;
+    // registers.ccr.H;
+    // registers.ccr.I;
     registers.ccr.N = R7;
     registers.ccr.Z = ~R7 & ~R6 & ~R5 & ~R4 & ~R3 & ~R2 & ~R1 & ~R0;
     registers.ccr.C = ~A7 & M7 | M7 & R7 | R7 & ~A7;
@@ -298,23 +296,23 @@ byte_t sub(byte_t A, byte_t M) {
 
 void SUB_IMM(void) {
     byte_t A = registers.A;
-    byte_t M = memory.virtual[registers.PC + 1];
+    byte_t M = memory[registers.PC + 1];
     registers.A = sub(A, M);
     registers.PC += 0x0002;
 }
 
 void SUB_DIR(void) {
     byte_t A = registers.A;
-    byte_t DIR = memory.virtual[registers.PC + 1];
-    byte_t M = memory.virtual[DIR];
+    byte_t DIR = memory[registers.PC + 1];
+    byte_t M = memory[DIR];
     registers.A = sub(A, M);
     registers.PC += 0x0002;
 }
 
 void SUB_EXT(void) {
     byte_t A = registers.A;
-    uint16_t EXT = BSWAP_16(&memory.virtual[registers.PC + 1]);
-    byte_t M = memory.virtual[EXT];
+    uint16_t EXT = BSWAP_16(&memory[registers.PC + 1]);
+    byte_t M = memory[EXT];
     registers.A = sub(A, M);
     registers.PC += 0x0002 + 1;
 }
@@ -322,8 +320,8 @@ void SUB_EXT(void) {
 void SUB_IX2(void) {
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
-    uint16_t offset = BSWAP_16(&memory.virtual[registers.PC + 1]);
-    byte_t M = memory.virtual[IX + offset];
+    uint16_t offset = BSWAP_16(&memory[registers.PC + 1]);
+    byte_t M = memory[IX + offset];
     registers.A = sub(A, M);
     registers.PC += 0x0002 + 1;
 }
@@ -331,8 +329,8 @@ void SUB_IX2(void) {
 void SUB_IX1(void) {
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
-    byte_t offset = memory.virtual[registers.PC + 1];
-    byte_t M = memory.virtual[IX + offset];
+    byte_t offset = memory[registers.PC + 1];
+    byte_t M = memory[IX + offset];
     registers.A = sub(A, M);
     registers.PC += 0x0002;
 }
@@ -340,7 +338,7 @@ void SUB_IX1(void) {
 void SUB_IX(void) {
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
-    byte_t M = memory.virtual[IX];
+    byte_t M = memory[IX];
     registers.A = sub(A, M);
     registers.PC += 1;
 }
@@ -350,7 +348,7 @@ void SBC_IMM(void){}
 void CPX_IMM(void){}
 void AND_IMM(void)
 {
-    registers.A &= memory.virtual[registers.PC + 1];
+    registers.A &= memory[registers.PC + 1];
     registers.PC += 2;
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
@@ -396,23 +394,23 @@ void AND_EXT(void){}
 void BIT_EXT(void){}
 void LDA_EXT(void)
 {
-    uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
-    registers.A = memory.virtual[ext];
+    uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
+    registers.A = memory[ext];
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    display_registers("LDA_EXT");
+    registers_display("LDA_EXT");
 }
 void STA_EXT(void)
 {
-    uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
-    memory.virtual[ext] = registers.A;
+    uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
+    memory[ext] = registers.A;
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    display_registers("STA_EXT");
+    registers_display("STA_EXT");
 }
 void EOR_EXT(void){}
 void ADC_EXT(void){}
@@ -420,9 +418,9 @@ void ORA_EXT(void){}
 void ADD_EXT(void){}
 void JMP_EXT(void)
 {
-    uint16_t ext = BSWAP_16(&memory.virtual[registers.PC + 1]);
+    uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
     registers.PC = ext;
-    display_registers("JMP_EXT");
+    registers_display("JMP_EXT");
 }
 void JSR_EXT(void){}
 void LDX_EXT(void){}

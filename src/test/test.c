@@ -1,4 +1,5 @@
 #include "hc08.h"
+
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -29,8 +30,8 @@ bool test_sub_imm(void)
         // Init
         registers.A = A;
         registers.PC = 0;
-        memory.virtual[0] = opcode;
-        memory.virtual[1] = M;
+        memory[0] = opcode;
+        memory[1] = M;
         
         // Test
         opcode_map[opcode]();
@@ -41,13 +42,13 @@ bool test_sub_imm(void)
         // Show
         if(pass == false)
         {
-            display_registers("SUB IMM: A0");
+            registers_display("SUB IMM: A0");
         }
 
         // Reset
-        reset_registers();
-        memory.virtual[0] = 0x00;
-        memory.virtual[1] = 0x00;
+        registers_reset();
+        memory[0] = 0x00;
+        memory[1] = 0x00;
     }
 
     return pass;
@@ -69,9 +70,9 @@ bool test_sub_dir(void)
         // Init
         registers.A = A;
         registers.PC = 0;
-        memory.virtual[0] = opcode;
-        memory.virtual[1] = DIR;
-        memory.virtual[DIR] = M;
+        memory[0] = opcode;
+        memory[1] = DIR;
+        memory[DIR] = M;
         
         // Test
         opcode_map[opcode]();
@@ -82,14 +83,14 @@ bool test_sub_dir(void)
         // Show
         if(pass == false)
         {
-            display_registers("SUB DIR: B0");
+            registers_display("SUB DIR: B0");
         }
 
         // Reset
-        reset_registers();
-        memory.virtual[0] = 0x00;
-        memory.virtual[1] = 0x00;
-        memory.virtual[DIR] = 0x00;
+        registers_reset();
+        memory[0] = 0x00;
+        memory[1] = 0x00;
+        memory[DIR] = 0x00;
     }
 
     return pass;
@@ -111,10 +112,10 @@ bool test_sub_ext(void)
         // Init
         registers.A = A;
         registers.PC = 0;
-        memory.virtual[0] = opcode;
-        memory.virtual[1] = (byte_t)(EXT >> 8);     // little-endian low
-        memory.virtual[2] = (byte_t)(EXT & 0x00FF); // little-endian high
-        memory.virtual[EXT] = M;
+        memory[0] = opcode;
+        memory[1] = (byte_t)(EXT >> 8);     // little-endian low
+        memory[2] = (byte_t)(EXT & 0x00FF); // little-endian high
+        memory[EXT] = M;
         
         // Test
         opcode_map[opcode]();
@@ -125,15 +126,15 @@ bool test_sub_ext(void)
         // Show
         if(pass == false)
         {
-            display_registers("SUB EXT: C0");
+            registers_display("SUB EXT: C0");
         }
 
         // Reset
-        reset_registers();
-        memory.virtual[0] = 0x00;
-        memory.virtual[1] = 0x00;
-        memory.virtual[2] = 0x00;
-        memory.virtual[EXT] = 0x00;
+        registers_reset();
+        memory[0] = 0x00;
+        memory[1] = 0x00;
+        memory[2] = 0x00;
+        memory[EXT] = 0x00;
     }
 
     return pass;

@@ -1,17 +1,25 @@
 #include "hc08.h"
 
-#include "stdio.h"
+#include <string.h>
+#include <stdio.h>
 
-HC08_Memory memory = {0};
+byte_t memory[0xFFFF] = {0};
 HC08_Registers registers = {0};
 
-void Map(byte_t* program, uint32_t size, uint32_t address)
+void memory_map(byte_t* program, uint32_t size, uint32_t address)
 {
     registers.PC = address;
-    memcpy(&memory.virtual[registers.PC], program, size);
+    memcpy(&memory[registers.PC], program, size);
 }
 
-void reset_registers(void)
+void program_step()
+{
+    unsigned char opcode = memory[registers.PC];
+    opcode_map[opcode]();
+    printf("Opcode: %x\n", opcode);
+}
+
+void registers_reset(void)
 {
     registers.A = 0x00;
     registers.IR = 0x0000;
@@ -28,14 +36,7 @@ void reset_registers(void)
     registers.ccr.C = 0;
 }
 
-void step()
-{
-    unsigned char opcode = memory.virtual[registers.PC];
-    opcode_map[opcode]();
-    printf("Opcode: %x\n", opcode);
-}
-
-void display_registers(const char* instruction)
+void registers_display(const char* instruction)
 {
     printf("Instruction: %s\n", instruction);
     printf("Registers:\n");

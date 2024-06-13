@@ -2,9 +2,22 @@ add_rules("mode.debug", "mode.release")
 add_includedirs("include")
 set_languages("c17")
 
+target("HC08")
+    set_kind("static")
+    add_files("src/hc08/*.c")
+    if is_plat("macosx") then
+    else
+        if is_mode("debug") then
+            add_cflags("-g") -- debug info
+        else 
+            set_optimize("faster") -- bswap
+        end 
+    end
+
 target("0x1A98")
     set_kind("binary")
     add_files("src/*.c")
+    add_deps("HC08")
     if is_plat("macosx") then
         -- add_frameworkdirs("/Library/Frameworks")
         -- add_frameworks("SDL2")
@@ -20,7 +33,8 @@ target("0x1A98")
 
 target("Test")
     set_kind("binary")
-    add_files("src/test/test.c", "src/hc08_ops.c", "src/hc08.c")
+    add_files("src/test/*.c")
+    add_deps("HC08")
     if is_plat("macosx") then
     else
         if is_mode("debug") then
