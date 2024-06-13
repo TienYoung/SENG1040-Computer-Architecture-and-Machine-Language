@@ -16,7 +16,9 @@ void memory_reset(void) {
 }
 
 void program_step(void) {
+    // Fetch
     unsigned char opcode = memory[registers.PC];
+    // Decode
     opcode_map[opcode]();
     printf("Opcode: %x\n", opcode);
 }
@@ -53,3 +55,6 @@ void registers_display(void) {
         registers.ccr.C
     );
 }
+
+void empty_hook(){};
+void (*hook_exec)(const char* asm, const HC08_Registers* registers, const byte_t* memory) = &empty_hook;

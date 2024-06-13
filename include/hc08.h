@@ -51,4 +51,4 @@ void registers_reset(void);
 
 void registers_display(void);
 
-void disassembly(void);
+extern void(*hook_exec)(const char* asm, const HC08_Registers* registers, const byte_t* memory);

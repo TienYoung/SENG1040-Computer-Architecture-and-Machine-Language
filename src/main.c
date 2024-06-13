@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "elf.h"
 #include "hc08.h"
@@ -11,7 +12,48 @@
     }                                           \
 } while(0)                                      \
 
+void disassembly(const char* asm, const HC08_Registers* registers, const byte_t* memory)
+{
+    uint16_t PC = registers->PC;
+    const byte_t* codes = &memory[PC];
+    
+    const char* splitter = strchr(asm, '_');
+    const char* address_mode = splitter;
+
+    size_t len = 1;
+    if(strcmp(address_mode, "IMM"))
+        len = 2;
+    else if(strcmp(address_mode, "DIR"))
+        len = 2;
+    else if(strcmp(address_mode, "EXT"))
+        len = 3;
+    else if(strcmp(address_mode, "IX2"))
+        len = 3;
+    else if(strcmp(address_mode, "IX1"))
+        len = 2;
+    else if(strcmp(address_mode, "IX"))
+        len = 1;
+
+    for (size_t i = 0; i < len; i++)
+    {
+        printf("%.2x", codes[i]);
+    }
+    putchar('\t');
+
+    for (size_t i = 0; asm[i] != '_' && asm[i] != '\0'; i++)
+    {
+        printf("%c", asm[i]);
+    }
+    putchar('\n');
+
+    registers_display();
+}
+
 int main(int argc, char* argv[]) {
+    hook_exec = &disassembly;
+    registers_reset();
+    memory_reset();
+
     printf("HC08 emulator\n");
 
     const char* filename = "project1_strip.abs";
