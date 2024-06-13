@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
             byte_t* program = malloc(p_memsz);
             fseek(file, p_offset, SEEK_SET);
             fread(program, sizeof(byte_t), p_memsz, file);
-            Map(program, p_memsz, p_vaddr);
+            memory_map(program, p_memsz, p_vaddr);
             free(program);
         }
     }
@@ -118,16 +118,16 @@ int main(int argc, char* argv[]) {
     // Test: 
     {
         // Into branch.
-        memory.virtual[0x0101] = 0b10000000;
-        memory.virtual[0x0100] = 'C';
+        memory[0x0101] = 0b10000000;
+        memory[0x0100] = 'C';
 
         while (1)
         {
             int input = getchar();
             if (input == '\n')
             {
-                step();
-                printf("Debug: 0x1000: %c\n", memory.virtual[0x1000]);
+                program_step();
+                printf("Debug: 0x1000: %c\n", memory[0x1000]);
             }
             else
             {

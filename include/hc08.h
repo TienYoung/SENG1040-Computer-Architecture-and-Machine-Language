@@ -7,12 +7,12 @@ typedef char            char_t;
 typedef short           int16_t;
 typedef int             int32_t;
 
-#if _MSC_VER >= 1933
-    #define BSWAP_16(x) _byteswap_ushort(*(uint16_t*)(x))
-    #define BSWAP_32(x) _byteswap_ulong(*(uint32_t*)(x))
-#else 
+#if __clang__
     #define BSWAP_16(x) __builtin_bswap16(*(uint16_t*)(x))
     #define BSWAP_32(x) __builtin_bswap32(*(uint32_t*)(x))
+#else 
+    #define BSWAP_16(x) _byteswap_ushort(*(uint16_t*)(x))
+    #define BSWAP_32(x) _byteswap_ulong(*(uint32_t*)(x))
 #endif
 
 typedef struct 
@@ -34,17 +34,16 @@ typedef struct
     } ccr;
 } HC08_Registers;
 
-#include "stack.h"
+extern HC08_Registers registers;
+
+extern byte_t memory[0xFFFF]; // 65536 - 64KB
+
 #include "hc08_ops.h"
 
-extern HC08_Registers registers;
-extern HC08_Memory memory;
-extern void(*opcode_map[256])(void);
+void memory_map(byte_t *program, uint32_t size, uint32_t address);
 
-void Map(byte_t *program, uint32_t size, uint32_t address);
+void program_step();
 
-void reset_registers(void);
+void registers_reset(void);
 
-void step();
-
-void display_registers(const char *instruction);
+void registers_display(const char *instruction);
