@@ -1,7 +1,5 @@
 #include "hc08.h"
 
-#include <stdio.h> // TODO: replace print register with hook function.
-
 // Empty and star
 #define OPS_EPT empty_func
 #define OPS_STR empty_func
@@ -54,6 +52,8 @@ void(*opcode_map[256])(void) = {
 #define R1 (R >> 1)
 #define R0 (R >> 0)
 
+#define HOOK_EXEC(name) hook_exec(name, &registers, memory)
+
 // Bit-Manipulation
 // 0: DIR
 void BRSET0_DIR(void){}
@@ -100,8 +100,8 @@ void  BLS_REL(void){}
 void  BCC_REL(void){}
 void  BCS_REL(void){}
 void  BNE_REL(void){}
-void BEQ_REL(void)
-{
+void BEQ_REL(void) {
+    HOOK_EXEC(__func__);
     if (registers.ccr.Z == 1)
     {
         char_t rel = memory[registers.PC + 1];
@@ -111,8 +111,6 @@ void BEQ_REL(void)
     {
         registers.PC += 2;
     }
-    printf("BEQ_REL\n");
-    registers_display();
 }
 void BHCC_REL(void){}
 void BHCS_REL(void){}
@@ -154,15 +152,13 @@ void CBEQA_IMM(void){}
 void   MUL_INH(void){}
 void  COMA_INH(void){}
 void  LSRA_INH(void){}
-void LTHX_IMM(void)
-{
+void LTHX_IMM(void) {
+    HOOK_EXEC(__func__);
     registers.IR = BSWAP_16(&memory[registers.PC + 1]);
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (int16_t)registers.IR < 0;
     registers.ccr.Z = registers.IR == 0;
-    printf("LTHX_IMM\n");
-    registers_display();
 }
 void  RORA_INH(void){}
 void  ASRA_INH(void){}
@@ -254,24 +250,20 @@ void BEG_REL(void){}
 void BLT_REL(void){}
 void BGT_REL(void){}
 void BLE_REL(void){}
-void TXS_INH(void)
-{
+void TXS_INH(void) {
+    HOOK_EXEC(__func__);
     registers.PC += 1;
     registers.SP = registers.IR - 1;
-    printf("TXS_INH\n");
-    registers_display();
 }
 void TSX_INH(void){}
 /*      NULL      */
 void TAX_INH(void){}
 void CLC_INH(void){}
 void SEC_INH(void){}
-void CLI_INH(void)
-{
+void CLI_INH(void) {
+    HOOK_EXEC(__func__);
     registers.PC += 1;
     registers.ccr.I = 0;
-    printf("CLI_INH\n");
-    registers_display();
 }
 void SEI_INH(void){}
 void RSP_INH(void){}
@@ -301,6 +293,7 @@ byte_t sub(byte_t A, byte_t M) {
 }
 
 void SUB_IMM(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     byte_t M = memory[registers.PC + 1];
     registers.A = sub(A, M);
@@ -308,6 +301,7 @@ void SUB_IMM(void) {
 }
 
 void SUB_DIR(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     byte_t DIR = memory[registers.PC + 1];
     byte_t M = memory[DIR];
@@ -316,6 +310,7 @@ void SUB_DIR(void) {
 }
 
 void SUB_EXT(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     uint16_t EXT = BSWAP_16(&memory[registers.PC + 1]);
     byte_t M = memory[EXT];
@@ -324,6 +319,7 @@ void SUB_EXT(void) {
 }
 
 void SUB_IX2(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
     uint16_t offset = BSWAP_16(&memory[registers.PC + 1]);
@@ -333,6 +329,7 @@ void SUB_IX2(void) {
 }
 
 void SUB_IX1(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
     byte_t offset = memory[registers.PC + 1];
@@ -342,6 +339,7 @@ void SUB_IX1(void) {
 }
 
 void SUB_IX(void) {
+    HOOK_EXEC(__func__);
     byte_t A = registers.A;
     uint16_t IX = registers.IR;
     byte_t M = memory[IX];
@@ -352,8 +350,8 @@ void SUB_IX(void) {
 void CMP_IMM(void){}
 void SBC_IMM(void){}
 void CPX_IMM(void){}
-void AND_IMM(void)
-{
+void AND_IMM(void) {
+    HOOK_EXEC(__func__);
     registers.A &= memory[registers.PC + 1];
     registers.PC += 2;
     registers.ccr.V = 0;
@@ -398,38 +396,32 @@ void SBC_EXT(void){}
 void CPX_EXT(void){}
 void AND_EXT(void){}
 void BIT_EXT(void){}
-void LDA_EXT(void)
-{
+void LDA_EXT(void) {
+    HOOK_EXEC(__func__);
     uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
     registers.A = memory[ext];
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    printf("LDA_EXT\n");
-    registers_display();
 }
-void STA_EXT(void)
-{
+void STA_EXT(void) {
+    HOOK_EXEC(__func__);
     uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
     memory[ext] = registers.A;
     registers.PC += 3;
     registers.ccr.V = 0;
     registers.ccr.N = (char_t)registers.A < 0;
     registers.ccr.Z = registers.A == 0;
-    printf("STA_EXT\n");
-    registers_display();
 }
 void EOR_EXT(void){}
 void ADC_EXT(void){}
 void ORA_EXT(void){}
 void ADD_EXT(void){}
-void JMP_EXT(void)
-{
+void JMP_EXT(void) {
+    HOOK_EXEC(__func__);
     uint16_t ext = BSWAP_16(&memory[registers.PC + 1]);
     registers.PC = ext;
-    printf("JMP_EXT\n");
-    registers_display();
 }
 void JSR_EXT(void){}
 void LDX_EXT(void){}
