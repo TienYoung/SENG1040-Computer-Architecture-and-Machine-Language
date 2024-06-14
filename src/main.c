@@ -18,20 +18,20 @@ void disassembly(const char* asm, const HC08_Registers* registers, const byte_t*
     const byte_t* codes = &memory[PC];
     
     const char* splitter = strchr(asm, '_');
-    const char* address_mode = splitter;
+    const char* address_mode = splitter + 1;
 
     size_t len = 1;
-    if(strcmp(address_mode, "IMM"))
+    if(strcmp(address_mode, "IMM") == 0)
         len = 2;
-    else if(strcmp(address_mode, "DIR"))
+    else if(strcmp(address_mode, "DIR") == 0)
         len = 2;
-    else if(strcmp(address_mode, "EXT"))
+    else if(strcmp(address_mode, "EXT") == 0)
         len = 3;
-    else if(strcmp(address_mode, "IX2"))
+    else if(strcmp(address_mode, "IX2") == 0)
         len = 3;
-    else if(strcmp(address_mode, "IX1"))
+    else if(strcmp(address_mode, "IX1") == 0)
         len = 2;
-    else if(strcmp(address_mode, "IX"))
+    else if(strcmp(address_mode, "IX") == 0)
         len = 1;
 
     for (size_t i = 0; i < len; i++)
