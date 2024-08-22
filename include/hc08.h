@@ -7,7 +7,10 @@ typedef char            char_t;
 typedef short           int16_t;
 typedef int             int32_t;
 
-#if __clang__
+#if __GNUC__
+    #define BSWAP_16(x) __builtin_bswap16(*(uint16_t*)(x))
+    #define BSWAP_32(x) __builtin_bswap32(*(uint32_t*)(x))
+#elif __clang__
     #define BSWAP_16(x) __builtin_bswap16(*(uint16_t*)(x))
     #define BSWAP_32(x) __builtin_bswap32(*(uint32_t*)(x))
 #else 

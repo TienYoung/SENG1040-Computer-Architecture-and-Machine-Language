@@ -15,6 +15,17 @@
             "compileCommands": ".vscode/compile_commands.json"
         },
         {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "intelliSenseMode": "linux-gcc-arm64",
+            "compileCommands": ".vscode/compile_commands.json"
+        },
+        {
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/include"
