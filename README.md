@@ -11,7 +11,7 @@ This project uses [xmake](https://xmake.io/#/getting_started) as a build system.
 ## Support
 - macOS
 - Windows
-- Linux (not tested yet)
+- Linux
 
 ## TODO:
 - [ ] Use TDD to implement all the rest instructions.
