@@ -152,7 +152,7 @@ void  CLR_IX  (void);
 
 // 8 INH
 void  RTI_INH(void);
-void  RTS_IMM(void);
+void  RTS_INH(void);
 /*      NULL      */
 void  SWI_INH(void);
 void  TAP_INH(void);
