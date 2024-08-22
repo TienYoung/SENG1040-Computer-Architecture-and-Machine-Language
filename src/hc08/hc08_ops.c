@@ -15,7 +15,7 @@ void(*opcode_map[256])(void) = {
 /*5*/   NEGX_INH,  CBEQX_IMM,    DIV_INH,   COMX_INH,   LSRX_INH,   LTHX_DIR,   RORX_INH,   ASRX_INH,   LSLX_INH,   ROLX_INH,   DECX_INH,  DBNZX_INH,   INCX_INH,   TSTX_INH,    MOX_DIX_,  CLRX_INH,
 /*6*/    NEG_IX1,   CBEQ_IX1_,   NSA_INH,    COM_IX1,    LSR_IX1,   CPHX_IMM,    ROR_IX1,    ASR_IX1,    LSL_IX1,    ROL_IX1,    DEC_IX1,   DBNZ_IX1,    INC_IX1,    TST_IX1,    MOV_IMD,    CLR_IX1, 
 /*7*/    NEG_IX,    CBEQ_IX_ ,   DAA_INN,    COM_IX,     LSR_IX,    CPHX_DIR,    ROR_IX,     ASR_IX,     LSL_IX,     ROL_IX,     DEC_IX ,   DBNZ_IX,     INC_IX,     TST_IX,     MOV_IX_D,   CLR_IX,  
-/*8*/    RTI_INH,    RTS_IMM,    OPS_EPT,    SWI_INH,    TAP_INH,    TPA_INH,   PULA_INH,   PSHA_INH,   PULX_INH,   PSHX_INH,   PULH_INH,   PSHH_INH,   CLRH_INH,    OPS_EPT,   STOP_INH,   WAIT_INH, 
+/*8*/    RTI_INH,    RTS_INH,    OPS_EPT,    SWI_INH,    TAP_INH,    TPA_INH,   PULA_INH,   PSHA_INH,   PULX_INH,   PSHX_INH,   PULH_INH,   PSHH_INH,   CLRH_INH,    OPS_EPT,   STOP_INH,   WAIT_INH, 
 /*9*/    BEG_REL,    BLT_REL,    BGT_REL,    BLE_REL,    TXS_INH,    TSX_INH,    OPS_EPT,    TAX_INH,    CLC_INH,    SEC_INH,    CLI_INH,    SEI_INH,    RSP_INH,    NOP_INH,    OPS_STR,    TXA_INH,
 /*A*/    SUB_IMM,    CMP_IMM,    SBC_IMM,    CPX_IMM,    AND_IMM,    BIT_IMM,    LDA_IMM,    AIS_IMM,    EOR_IMM,    ADC_IMM,    ORA_IMM,    ADD_IMM,    OPS_EPT,    BSR_REL,    LDX_IMM,    AIX_IMM,
 /*B*/    SUB_DIR,    CMP_DIR,    SBC_DIR,    CPX_DIR,    AND_DIR,    BIT_DIR,    LDA_DIR,    STA_DIR,    EOR_DIR,    ADC_DIR,    ORA_DIR,    ADD_DIR,    JMP_DIR,    JSR_DIR,    LDX_DIR,    STX_DIR,
@@ -229,7 +229,7 @@ void  CLR_IX  (void){}
 
 // 8 INH
 void  RTI_INH(void){}
-void  RTS_IMM(void){}
+void  RTS_INH(void){}
 /*      NULL      */
 void  SWI_INH(void){}
 void  TAP_INH(void){}
